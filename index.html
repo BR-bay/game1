@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tanya Jawab</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+        .question {
+            font-size: 1.5rem;
+            margin: 20px 0;
+        }
+        .answer {
+            margin: 10px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="game">
+            <div class="question" id="question"></div>
+            <input type="text" id="answer" class="answer" placeholder="Ketik jawaban di sini">
+            <button class="btn" id="submit">Jawab</button>
+        </div>
+        <div class="score" id="score">Total Dana: Rp0</div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "Seberapa kamu mencintaiku?", value: 500 },
+            { text: "Apa alasanmu memilihku?", value: 500 },
+            { text: "Apa rencana kita di masa depan?", value: 500 }
+        ];
+
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
+
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const submitButton = document.getElementById('submit');
+        const scoreElement = document.getElementById('score');
+
+        function loadQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                questionElement.textContent = questions[currentQuestionIndex].text;
+                answerElement.value = '';
+            } else {
+                endGame();
+            }
+        }
+
+        function handleAnswer() {
+            const answer = answerElement.value.trim();
+            if (answer) {
+                totalScore += questions[currentQuestionIndex].value;
+                sendToWhatsApp(questions[currentQuestionIndex].text, answer);
+                currentQuestionIndex++;
+                updateScore();
+                loadQuestion();
+            } else {
+                alert("Silakan isi jawaban sebelum melanjutkan!");
+            }
+        }
+
+        function sendToWhatsApp(question, answer) {
+            const phoneNumber = "085212637719";
+            const message = `Pertanyaan: ${question}%0AJawaban: ${answer}`;
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        function updateScore() {
+            scoreElement.textContent = `Total Dana: Rp${totalScore}`;
+        }
+
+        function endGame() {
+            questionElement.textContent = "Terima kasih sudah bermain!";
+            document.getElementById('game').innerHTML = `
+                <p>Permainan selesai. Kamu telah mengumpulkan total dana sebesar Rp${totalScore}.</p>
+            `;
+        }
+
+        submitButton.addEventListener('click', handleAnswer);
+
+        loadQuestion();
+    </script>
+</body>
+</html>
